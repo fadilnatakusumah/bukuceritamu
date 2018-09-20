@@ -1,0 +1,473 @@
+.size-logo {
+    width: 100px;
+    height: 100px;
+    transition: .5s;
+}
+
+.size-logo:hover {
+    transition: .5s;
+    transform: scale(1.2);
+}
+
+.footer {
+    padding: 50px;
+}
+
+.biglogo {
+    width: 20%;
+    margin-bottom: 10px;
+    transition: .5s;
+}
+
+.biglogo:hover {
+    transition: .3s;
+    transform: scale(1.2);
+}
+
+.fill {
+    /* min-height: 900px; */
+    min-height: 700px;
+    /* height: 100%; */
+}
+
+.sidebar {
+    border: 1px solid white;
+    border-radius: 5px;
+}
+
+.sidebar a {
+    /* color: #e77c52; */
+    color: white;
+    text-align: left;
+    padding: 10px;
+    padding-left: 15px;
+    text-decoration: none;
+    display: block;
+    transition: .3s;
+    border-radius: 5px;
+}
+
+.sidebar a:hover {
+    transition: .3s;
+    background-color: #0971b6;
+    border-radius: 5px;
+}
+
+.profile {
+    width: 200px;
+    height: 200px;
+    text-align: center;
+}
+
+.my-active {
+    background-color: #074b79;
+    color: white;
+}
+
+#bg {
+    background: url("../img/bg2.png") no-repeat center center;
+    -webkit-background-size: cover;
+    -moz-background-size: cover;
+    -o-background-size: cover;
+    background-size: cover;
+    /* padding-top: 8rem; */
+    /* overflow: hidden; */
+    padding: 0;
+    /* padding-bottom: 4.5rem; */
+}
+
+.menus {
+    transition: .5s;
+}
+
+.menus img {
+    width: 30px;
+    height: 30px;
+}
+
+.menus:hover {
+    transform-origin: left;
+    transform: scale(1.1);
+    transition: .3s;
+}
+
+#menus-1:hover {
+    /* color: #fffb00; */
+    color: white;
+    background-color: #b40db9;
+}
+
+#menus-2:hover {
+    /* color: #fffb00; */
+    /* color: #ffda08; */
+    color: white;
+    background-color: #303023;
+}
+
+#menus-3:hover {
+    /* color: #fffb00; */
+    /* color: #ffda08; */
+    color: white;
+    background-color: #3a71e9;
+}
+
+#menus-4:hover {
+    /* color: #fffb00; */
+    /* color: #ffda08; */
+    color: white;
+    background-color: #dd5b27;
+}
+
+#menus-5:hover {
+    /* color: #fffb00; */
+    /* color: #ffda08; */
+    color: white;
+    background-color: #04af21;
+}
+
+.top-navigation a {
+    padding: 3px;
+    text-decoration: none;
+    color: black;
+    transition: .5s;
+    padding-inline-start: 10px;
+    padding-inline-end: 10px;
+}
+
+.top-navigation a:hover {
+    transition: .3s;
+    border-bottom: lightseagreen solid 2px;
+    color: lightseagreen;
+    /* color: #f8f9fa; */
+    /* background-color:  #2b74c7; */
+}
+
+.my-overflow {
+    height: 100%;
+    overflow: auto;
+}
+
+#container-overflow {
+    /* display: none;     */
+    max-height: 400px;
+    height: 200px;
+}
+
+.option {
+    cursor: pointer;
+    vertical-align: top;
+    display: inline-block;
+    text-align: center;
+    transition: .3s;
+}
+
+.option:hover{
+    transform: scale(1.2);
+    transition: .5s;
+    z-index: 1;
+}
+.option:hover > .my-label {
+    background-color: #003cac;
+    color: #e4f0fa;
+}
+.option:hover > img {
+    transform-origin: bottom;
+    transition: .4s;
+    transform: scale(1.2);
+}
+
+.option img {
+    transition: .4s;
+    width: 40px;
+    height: 40px;
+}
+
+.my-canvas{
+    background-color: white;
+    background-color: #a02d2d;
+    /* height:400px;
+    width:711px; */
+    height:97%;
+    width:80%;
+}
+
+
+.my-label {
+    display: block;
+    align-items: center;
+    padding: 1px;
+    background-color: #e4f0fa;
+    border-radius: 5px;
+    color: #003cac;
+    font-weight: bold;
+    transition: .5s;
+    font-size: 14px;
+}
+
+::-webkit-scrollbar {
+    width: 10px;
+}
+
+/* Track */
+
+::-webkit-scrollbar-track {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+}
+
+/* Handle */
+
+::-webkit-scrollbar-thumb {
+    -webkit-border-radius: 10px;
+    border-radius: 10px;
+    background: #111;
+}
+
+
+.my-thumbnail-asset{
+    width: 200px;
+    height: 200px;
+    cursor: pointer;
+}
+
+.my-thumbnail-asset:hover{
+    border: #d1d5dd 6px solid;
+    outline: none;
+}
+.my-thumbnail-label{
+    display: block;
+    align-items: center;
+}
+
+.my-div-thumbnail{
+    vertical-align: top;
+    display: inline-block;
+    text-align: center;
+    /* transition: .3s; */
+}
+.control-btn{
+    width: 200px;
+    text-align: center;
+}
+.icon-control-btn{
+    margin-left: 5px;
+    width: 15px;
+    height: 15px;
+}
+.control-panel-style{
+    border-bottom: 1px solid #d1d5dd;
+    margin-top: 3px;
+}
+.my-button-save{
+    float: right;
+    background-color: #04af21;
+    color: white;
+    padding: 5px 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 15px;
+}
+.my-button-delete-canvas{
+    /* float: left; */
+    background-color: #d31b1b;
+    color: white;
+    padding: 3px 8px;
+    border-radius: 5px;
+    font-size: 15px;
+    cursor: pointer;
+}
+.thumbnail-canvas:hover{
+    transition: .3s;
+    border: 3px solid #1057d1;
+    transform: scale(1.05)
+}
+
+.thumbnail-canvas{
+    border: 3px solid #808388;
+    transition: .5s;
+    margin: 4px;
+    margin-top: 5px;
+    /* Rotating for scroll horizontal */
+}
+.my-canvas-active{
+    transform: scale(1.05);
+    border: 3px solid #1057d1;
+}
+
+.my-asset-active{
+    /* transform: scale(1.05); */
+    border: 3px solid #1057d1;
+}
+
+#add-canvas-btn{
+    border: none; 
+    background: none; 
+    cursor: pointer;
+    transition: .5s;
+}
+#add-canvas-btn:hover{
+    transition: .3s;
+    transform: scale(1.3);
+}
+#add-canvas-btn img{
+    height: 60px;
+    width: 60px;
+}
+
+#canvas-preview {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    /* -webkit-overflow-scrolling: touch; */
+    white-space: nowrap;
+    max-height: 150px;
+    /* display: inline-block; */
+}
+
+.preview-label{
+    display: block;
+    color: #003cac;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.percanvas{
+    text-align: center;
+    cursor: pointer;
+    display: inline-block;
+}
+
+#text-textarea{
+    font-size: 40px;
+    background-color: #e5e7e9;
+}
+
+
+/* For Spinners/Loader when saving */
+.lds-roller {
+    display: inline-block;
+    position: relative;
+    width: 64px;
+    height: 64px;
+  }
+  .lds-roller div {
+    animation: lds-roller 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+    transform-origin: 32px 32px;
+  }
+  .lds-roller div:after {
+    content: " ";
+    display: block;
+    position: absolute;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: #003cac;
+    margin: -3px 0 0 -3px;
+  }
+  .lds-roller div:nth-child(1) {
+    animation-delay: -0.036s;
+  }
+  .lds-roller div:nth-child(1):after {
+    top: 50px;
+    left: 50px;
+  }
+  .lds-roller div:nth-child(2) {
+    animation-delay: -0.072s;
+  }
+  .lds-roller div:nth-child(2):after {
+    top: 54px;
+    left: 45px;
+  }
+  .lds-roller div:nth-child(3) {
+    animation-delay: -0.108s;
+  }
+  .lds-roller div:nth-child(3):after {
+    top: 57px;
+    left: 39px;
+  }
+  .lds-roller div:nth-child(4) {
+    animation-delay: -0.144s;
+  }
+  .lds-roller div:nth-child(4):after {
+    top: 58px;
+    left: 32px;
+  }
+  .lds-roller div:nth-child(5) {
+    animation-delay: -0.18s;
+  }
+  .lds-roller div:nth-child(5):after {
+    top: 57px;
+    left: 25px;
+  }
+  .lds-roller div:nth-child(6) {
+    animation-delay: -0.216s;
+  }
+  .lds-roller div:nth-child(6):after {
+    top: 54px;
+    left: 19px;
+  }
+  .lds-roller div:nth-child(7) {
+    animation-delay: -0.252s;
+  }
+  .lds-roller div:nth-child(7):after {
+    top: 50px;
+    left: 14px;
+  }
+  .lds-roller div:nth-child(8) {
+    animation-delay: -0.288s;
+  }
+  .lds-roller div:nth-child(8):after {
+    top: 45px;
+    left: 10px;
+  }
+  @keyframes lds-roller {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+  /* /For Spinner */
+
+  a.my-link{
+      text-decoration: none;
+  }
+  
+  .swiper-container {
+    width: 600px;
+    height: 300px;
+}
+
+/* For loader in asset */
+.lds-dual-ring {
+    display: inline-block;
+    width: 64px;
+    height: 64px;
+  }
+  .lds-dual-ring:after {
+    content: " ";
+    display: block;
+    width: 46px;
+    height: 46px;
+    margin: 1px;
+    border-radius: 50%;
+    border: 5px solid #003cac;
+    border-color: #003cac transparent #003cac transparent;
+    animation: lds-dual-ring 1.2s linear infinite;
+  }
+  @keyframes lds-dual-ring {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
+    }
+  }
+/* /For loader in asset */
+
+/* Background for search page unregistered user */
+#searchPageBody{
+    /* background-image: url('../assets/bg/bg1.jpeg'); */
+    background-image: url('../assets/bg/bg2.jpg');
+    background-size: 100% 100%;
+}
