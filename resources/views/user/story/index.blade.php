@@ -725,14 +725,14 @@
           }else{
             currentCanvas.setBackgroundImage(img_src, currentCanvas.renderAll.bind(currentCanvas));
             fabric.Image.fromURL(img_src, function (img) {
-              img.scaleToWidth(currentCanvas.width);
-              img.scaleToHeight(currentCanvas.height);
+              // img.scaleToWidth(currentCanvas.width);
+              // img.scaleToHeight(currentCanvas.height);
               var oImg = img.set({
                 left: 0,
                 top: 0,
                 angle: 0,
-                // scaleX: currentCanvas.width / img.width,
-                // scaleY: currentCanvas.height  / img.height
+                scaleX: currentCanvas.width / img.width,
+                scaleY: currentCanvas.height  / img.height
               });
               currentCanvas.setBackgroundImage(oImg).renderAll();
               currentCanvas.renderAll();
