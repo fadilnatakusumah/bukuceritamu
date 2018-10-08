@@ -325,7 +325,7 @@
                 <i>Asset</i>
               </h6>
             </div>
-            <div class="card-body" id="assetRecommendation">
+            <div class="card-body" id="assetRecommendation" style="max-height:390px;">
               <div align="center" id="recommendInfo" class="alert alert-primary" role="alert">
                 Tidak terdapat rekomendasi
                 <br>
@@ -501,6 +501,14 @@
         // =========================== DOCUMENT READY
         $(document).ready(function(){
           // set page to 100% zoom
+         
+         
+          // (async function(){
+          //   var test = await fetch('https://kateglo.com/api.php?format=json&phrase=sapi');
+          //   console.log(test);
+          // })();
+
+
           const res = "Untuk pengalaman yang lebih baik, set zooming browser kamu menjadi 100%";
           $.notify(res, {
             // position: "top center",
@@ -644,6 +652,7 @@
         $('#btnClearCanvas').click(function(){
           if(confirm('Apakah kamu yakin ingin membersihkan Canvas?')){
             currentCanvas.clear();
+            currentCanvas.setBackgroundColor('white');
             currentCanvas.renderAll();
             renderThumbnail();
             console.log('canvas cleared');
@@ -816,7 +825,8 @@
           currentCanvas.renderAll();
 
           // Check and display the recommendation
-          $('.recommendedAssets').find('div').remove(); 
+          $(".recommendedAssets").find('div').remove();
+          $(".recommendedAssets").hide();
           $("#recommendInfo").hide();
           $("#recommendLoader").show();
           
@@ -824,14 +834,16 @@
             
           // ALGORITHM FOR TOKENIZATION
           // split by space
-          var checkText = text.split(" ");
+          var checkText = text.split(/[ -]+/);
             // console.log(checkText);
-          var checkTextForBlockwords = text.split(" ");
+          var checkTextForBlockwords = text.split("/[ -]+/");
+          var recommendedAssetText = [];
 
           // check for symbol in it and remove it
           for(var i = 0; i < checkText.length; i++){
-            checkText[i] =  checkText[i].replace(/[\W_\n\r]/g, '').toLowerCase();
-            // console.log(checkText[i]);
+            // checkText[i].split("-");
+            // checkText[i] =  checkText[i].rep lace(/[\W_\n\r]/g, '').toLowerCase();
+            console.log(checkText[i]);
           }
           // checkTextForBlockwords.push(checkText[i]);
           // checkTextForBlockwords = checkText;
@@ -842,13 +854,19 @@
 
           // ALGORITHM FOR STOPWORDS REMOVAl
           // remove all the matching stopwords and switch to empty string
+          // console.log(allStopwords);
           for(var i = 0; i < checkText.length; i++){
+            console.log('Token ke '+i+' - '+checkText[i]);
             for(var j=0; j< allStopwords.length; j++){
-              if(checkText[i].includes(allStopwords[j].stopwords)){
+            //   console.log('Stopwords ke '+j+' - '+allStopwords[j]);
+              if(allStopwords[j].words===checkText[i]){
                 checkText[i] = "";
+                console.log('Terdapat stoplist: '+allStopwords[j].words);
               }
             }
+            // console.log('Hasil dari Stoplist');
           }
+          console.log(checkText);
 
           // /=========================================ALGORITHM FOR STOPWORDS REMOVAl
 
@@ -917,59 +935,134 @@
           }
           console.log("HASIL AKHIR TEXT PRE-PROCESSING");
           console.log(checkText);
+          // recommendedAssetText = checkText;
+          // console.log(recommendedAssetText);
 
-          // /=========================================ALGORITHM FOR BLOCKWORDS REMOVAl
+
+          // /=========================================ALGORITHM FOR BLOCKWORDS STEMMING
+
+          // get all synonym
+          for(var i = 0; i < checkText.length; i++){
+              if(checkText[i]!= ""){
+                $.ajax({
+                  url: 'https://kateglo.com/api.php?format=json&phrase='+checkText[i],
+                  crossDomain: 'true',
+                  async: 'true',
+                  method: 'get'
+                }).done(function(res){
+                  console.log(res.kateglo.relation.s);
+                  let obj = res.kateglo.relation.s;
+                  Object.keys(obj).forEach(function(key) {
+                    console.log('Sinonim '+checkText[i]+': '+obj[key].related_phrase);
+                    recommendedAssetText.push(obj[key].related_phrase);
+                  });
+
+
+
+                  if(recommendedAssetText.length>0){
+                    for(var i = 0; i < recommendedAssetText.length; i++){
+                      for(var j = 0; j < allAssets.length; j++){
+                        if(allAssets[j].name.toLowerCase().indexOf(recommendedAssetText[i]) >= 0 && recommendedAssetText[i] != "" && recommendedAssetText[i] != undefined){
+                          // console.log(checkText[]);
+                          if(allRecommendedAssets.length > 0){
+                            console.log('allRecommendedAssets: tidak kosong');
+                            // console.log(allRecommendedAssets);
+                            for(k = 0; k < allRecommendedAssets.length; k++){
+                              if(allRecommendedAssets[k].name.toLowerCase() == allAssets[j].name.toLowerCase()){
+                                // ;
+                              }else{
+                                allRecommendedAssets.push(allAssets[j]);
+                                console.log('Ada: '+checkText[i]+' didalam: '+ allAssets[j].name);
+                              }
+                            }
+                          }else{
+                            console.log('allRecommendedAssets: kosong');
+                            console.log(allAssets[j].name.toLowerCase());
+                            allRecommendedAssets.push(allAssets[j]);
+                            console.log('Ada: '+checkText[i]+' didalam: '+ allAssets[j].name);
+                          }
+                        }
+                      }
+                    }
+                    console.log(allRecommendedAssets);
+                    // $('#recommendInfo').hide();
+                    $('#recommendLoader').hide();
+                    if(allRecommendedAssets.length>0){
+                    // make the html  
+                      for(var i = 0; i < allRecommendedAssets.length; i++){
+                        $('.recommendedAssets').append(`
+                        <div class="my-div-thumbnail" onclick="getRecommendAsset(this)">
+                            <img style="width:150px; height:150px;"  class="my-thumbnail-asset float-left m-1" data-asset-location="`+ window.location.origin+"/"+allRecommendedAssets[i].location +`" data-asset-name="`+ allRecommendedAssets[i].name +`" src="`+ window.location.origin+"/"+allRecommendedAssets[i].location +`" alt="">
+                            <span class="my-thumbnail-label">`+ allRecommendedAssets[i].name +`</span>
+                        </div>`);
+                      }
+                      $("#recommendLoader").hide();
+                      $('div.recommendedAssets').show();
+                      // allRecommendedAssets = null;
+                    }else{
+                      $("#recommendLoader").hide();
+                      $("#recommendInfo").show();
+                    }
+                  }
+                    
+                  allRecommendedAssets.length = 0;
+                });
+              }
+            }
 
 
           // ALGORITHM FOR GIVING ASSET RECOMENDATION
           // get all the matching token with asset and make the HTML
-          if(checkText.length>0){
-            for(var i = 0; i < checkText.length; i++){
-              for(var j = 0; j < allAssets.length; j++){
-                if(allAssets[j].name.toLowerCase().indexOf(checkText[i]) >= 0 && checkText[i] != ""){
-                  // console.log(checkText[]);
-                  // if(allRecommendedAssets.length > 0){
-                  //   console.log('allRecommendedAssets: tidak kosong');
-                  //   // console.log(allRecommendedAssets);
-                  //   for(k = 0; k < allRecommendedAssets.length; k++){
-                  //     if(allRecommendedAssets[k].name.toLowerCase() == allAssets[j].name.toLowerCase()){
-                  //       // ;
-                  //     }else{
-                  //       allRecommendedAssets.push(allAssets[j]);
-                  //       console.log('Ada: '+checkText[i]+' didalam: '+ allAssets[j].name);
-                  //     }
-                  //   }
-                  // }else{
-                    // console.log('allRecommendedAssets: kosong');
-                    // console.log(allAssets[j].name.toLowerCase());
-                    allRecommendedAssets.push(allAssets[j]);
-                    console.log('Ada: '+checkText[i]+' didalam: '+ allAssets[j].name);
-                  // }
-                }
-              }
-            }
-            console.log(allRecommendedAssets);
-            // $('#recommendInfo').hide();
-            $('#recommendLoader').hide();
-            if(allRecommendedAssets.length>0){
-            // make the html  
-              for(var i = 0; i < allRecommendedAssets.length; i++){
-                $('.recommendedAssets').append(`
-                <div class="my-div-thumbnail" onclick="getRecommendAsset(this)">
-                    <img style="width:70px; height:70px;"  class="my-thumbnail-asset float-left m-1" data-asset-location="`+ window.location.origin+"/"+allRecommendedAssets[i].location +`" data-asset-name="`+ allRecommendedAssets[i].name +`" src="`+ window.location.origin+"/"+allRecommendedAssets[i].location +`" alt="">
-                    <span class="my-thumbnail-label">`+ allRecommendedAssets[i].name +`</span>
-                </div>`);
-              }
-              $("#recommendLoader").hide();
-              $('div.recommendedAssets').show();
-              allRecommendedAssets = null;
-            }else{
-              $("#recommendLoader").hide();
-              $("#recommendInfo").show();
-            }
-          }
-            
-          // allRecommendedAssets.length = 0;
+          // setTimeout(function(){
+            // if(recommendedAssetText.length>0){
+            //   for(var i = 0; i < recommendedAssetText.length; i++){
+            //     for(var j = 0; j < allAssets.length; j++){
+            //       if(allAssets[j].name.toLowerCase().indexOf(recommendedAssetText[i]) >= 0 && recommendedAssetText[i] != "" && recommendedAssetText[i] != undefined){
+            //         // console.log(checkText[]);
+            //         if(allRecommendedAssets.length > 0){
+            //           console.log('allRecommendedAssets: tidak kosong');
+            //           // console.log(allRecommendedAssets);
+            //           for(k = 0; k < allRecommendedAssets.length; k++){
+            //             if(allRecommendedAssets[k].name.toLowerCase() == allAssets[j].name.toLowerCase()){
+            //               // ;
+            //             }else{
+            //               allRecommendedAssets.push(allAssets[j]);
+            //               console.log('Ada: '+checkText[i]+' didalam: '+ allAssets[j].name);
+            //             }
+            //           }
+            //         }else{
+            //           console.log('allRecommendedAssets: kosong');
+            //           console.log(allAssets[j].name.toLowerCase());
+            //           allRecommendedAssets.push(allAssets[j]);
+            //           console.log('Ada: '+checkText[i]+' didalam: '+ allAssets[j].name);
+            //         }
+            //       }
+            //     }
+            //   }
+            //   console.log(allRecommendedAssets);
+            //   // $('#recommendInfo').hide();
+            //   $('#recommendLoader').hide();
+            //   if(allRecommendedAssets.length>0){
+            //   // make the html  
+            //     for(var i = 0; i < allRecommendedAssets.length; i++){
+            //       $('.recommendedAssets').append(`
+            //       <div class="my-div-thumbnail" onclick="getRecommendAsset(this)">
+            //           <img style="width:70px; height:70px;"  class="my-thumbnail-asset float-left m-1" data-asset-location="`+ window.location.origin+"/"+allRecommendedAssets[i].location +`" data-asset-name="`+ allRecommendedAssets[i].name +`" src="`+ window.location.origin+"/"+allRecommendedAssets[i].location +`" alt="">
+            //           <span class="my-thumbnail-label">`+ allRecommendedAssets[i].name +`</span>
+            //       </div>`);
+            //     }
+            //     $("#recommendLoader").hide();
+            //     $('div.recommendedAssets').show();
+            //     // allRecommendedAssets = null;
+            //   }else{
+            //     $("#recommendLoader").hide();
+            //     $("#recommendInfo").show();
+            //   }
+            // }
+              
+            // allRecommendedAssets.length = 0;
+
+          // },1500);
 
         }, 3000);
 

@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 
 class LoginController extends Controller
@@ -67,26 +68,10 @@ class LoginController extends Controller
       'email' => 'required|email|max:255',
       'password' => 'required'
       ]);
+
     }
-    
-    // protected function authenticated(Request $request, $user)
-    // {
-    //   // var_dump($user);
-    //   // dd($user);
-    //   if($user){
-    //     if($user->admin){
-    //       // return view('admin.index');
-    //       // Session::flash('success', 'Berhasil login');
-    //       return redirect()->route('admin.index');
-    //     }else{
-    //       // return view('user.index');
-    //       // return view('user.index');
-    //       return redirect()->route('user.index');
-    //     }
-    //   }
-    // }
-    public function redirectPath()
-    {
+
+    public function redirectPath(){
     // Do your logic to flash data to session...
     session()->flash('successLogin', 'Berhasil Login');
 
@@ -94,6 +79,13 @@ class LoginController extends Controller
     return $this->laravelRedirectPath();
     }
     
+    protected function sendFailedLoginResponse(Request $request)
+    {
+        Session::flash('error', 'Email & Password yang kamu masukan salah');
+        return redirect()->back();
+
+    }
+
     public function logout(Request $request)
     {
       $this->performLogout($request);

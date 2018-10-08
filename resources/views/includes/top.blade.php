@@ -58,7 +58,7 @@
     <nav class="navbar navbar-light bg-light static-top">
         <div class="container">
             <a class="navbar-brand" href="{{ route('index')}}">
-                <img src="{{ asset('assets\logo.png') }}" alt="" width="30px" height="30px">
+                <img id="bmlogo" data-logo="{{ asset('assets\logo.png') }}" src="{{ asset('assets\logo.png') }}" alt="" width="30px" height="30px">
                 BukuCeritamu
             </a>
             @desktop

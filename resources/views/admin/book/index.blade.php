@@ -118,7 +118,7 @@
                           </thead>
                           <tbody>
                             @foreach($books->where('approved', 1) as $book)
-                            <tr style="cursor: pointer;" data-toggle="modal" data-target="#exampleViewBook{{$book->id}}">
+                            <tr style="cursor: pointer;">
                               <th scope="row">{{$book->id}}</th>
                               <td>{{$book->title}}</td>
                               <td>{{$book->profile->username}}</td>

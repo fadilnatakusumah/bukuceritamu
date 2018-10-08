@@ -76,6 +76,8 @@
 
 <script>
     $(document).ready(function(){
+        var doc = new jsPDF('l','mm','a4');
+
             var mySwiper = new Swiper ('.swiper-container', {
             // Optional parameters
                 direction: 'horizontal',
@@ -114,14 +116,24 @@
 
         // download button
         setTimeout(function(){
-            $('#downloadPDF').show(300);
+            $('#downloadPDF').show(500);
+            var img = new Image();
+            img.src = 'http://mytugasakhir.oo/assets/logo.png';
+            // console.log(img.src);
+            doc.addImage(img.src,'JPEG', 105,40,80,80);
+            // doc.setTextColor(150);
+            doc.setFontSize(22);
+            doc.setFontType("bold");
+            doc.setTextColor(209, 96, 20);
+            doc.text(118, 128, 'BukuCeritamu');
+            doc.addPage();
+            
         },1000);
         $('#downloadPDF').click(function(){
             var title = $('#bookTitle').text();
             console.log($('canvas').width()+ " : "+ $('canvas').height());
             // var doc = new jsPDF('l','px',[$('canvas').width(), $('canvas').height()]);
             // console.log($('canvas').width(), $('canvas').height());
-            var doc = new jsPDF('l','mm','a4');
             // var width = pdf.internal.pageSize.getWidth();
             // var height = pdf.internal.pageSize.getHeight();
             doc.addImage(imageCanvases[0], 'JPEG', 0,0,298,210);

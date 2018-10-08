@@ -13,6 +13,7 @@ use Illuminate\Support\Facades\Auth;
 | contains the "web" middleware group. Now create something great!
 |
 */
+Auth::routes(); 
 
 Route::get('/', function () {
     if(Auth::check()){
@@ -27,10 +28,6 @@ Route::get('/', function () {
     ->with('search', '');
     
 })->name('index');
-
-Auth::routes();
-       
-
 
 
 // Route for unregisterd user

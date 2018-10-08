@@ -324,7 +324,7 @@
                 <i>Asset</i>
               </h6>
             </div>
-            <div class="card-body" id="assetRecommendation">
+            <div class="card-body" id="assetRecommendation" style="max-height:390px;">
               <div align="center" id="recommendInfo" class="alert alert-primary" role="alert">
                 Tidak terdapat rekomendasi
                 <br>
@@ -507,8 +507,9 @@
             console.log("sumcanvas: "+ sumCanvas);
             console.log("id canvas: "+ idCanvas);
             for(var i = 0; i < allCanvas.length ; i++){
+                // setTimeout(function(){
                 (function(i){
-                  setTimeout(() => {
+                  // setTimeout(() => {
                     currentCanvas.loadFromJSON(allCanvas[i],function(){
                       $('#canvas-preview').append(`
                         <div id="percanvas`+i+`" class="percanvas" onclick="switchCanvas(this.id)">
@@ -516,16 +517,21 @@
                           <span class="preview-label">`+i+`</span>
                         </div>`);
                         // console.log($('#percanvas'+i));
-                        currentCanvas.loadFromJSON(allCanvas[0],function(){
-                          $('#percanvas0 img').addClass('my-canvas-active');
-                          $('div#percanvas0').find('span').text('Cover');
-                        });
+                        // setTimeout(function(){
+                          currentCanvas.loadFromJSON(allCanvas[0],function(){
+                            $('#percanvas0 img').addClass('my-canvas-active');
+                            $('div#percanvas0').find('span').text('Cover');
+                          });
+                        // },1500);
+
                     });
-                  }, 500);
-                  // alert(i);
+                  // }, 500);
+                  alert("Memuat Canvas "+i+" - Klik OK");
                   // return i;
                   // preventDefault();
                 })(i);
+              // },1000);
+
                   // break;
             }
 
@@ -650,6 +656,7 @@
           if(confirm('Apakah kamu yakin ingin membersihkan Canvas?')){
             currentCanvas.clear();
             currentCanvas.renderAll();
+            currentCanvas.setBackgroundColor('white');
             renderThumbnail();
             console.log('canvas cleared');
           }
@@ -723,7 +730,8 @@
           var img_src = $('input[name=locationBg]').val();
           
           // check if it's color
-          if (img_src.charAt(0) == "#"){
+          if (img_src.charAt(0) === "#"){
+            currentCanvas.clear();
             currentCanvas.setBackgroundColor(img_src);
             currentCanvas.renderAll();
             renderThumbnail();
@@ -820,15 +828,17 @@
           currentCanvas.renderAll();
           
           // Check and display the recommendation
+          $(".recommendedAssets").find('div').remove();
+          $(".recommendedAssets").hide();
           $("#recommendInfo").hide();
           $("#recommendLoader").show();
           
             setTimeout(function(){
             // ALGORITHM FOR TOKENIZATION
             // split by space
-            var checkText = text.split(" ");
+            var checkText = text.split("/[ -]+/");
               // console.log(checkText);
-            var checkTextForBlockwords = text.split(" ");
+            var checkTextForBlockwords = text.split("/[ -]+/");
 
             // check for symbol in it and remove it
             for(var i = 0; i < checkText.length; i++){
@@ -839,16 +849,22 @@
 
 
             // ALGORITHM FOR STOPWORDS REMOVAl
-            // remove all the matching stopwords and switch to empty string
-            for(var i = 0; i < checkText.length; i++){
-              for(var j=0; j< allStopwords.length; j++){
-                if(checkText[i].includes(allStopwords[j].stopwords)){
-                  checkText[i] = "";
-                }
+          // remove all the matching stopwords and switch to empty string
+          // console.log(allStopwords);
+          for(var i = 0; i < checkText.length; i++){
+            console.log('Token ke '+i+' - '+checkText[i]);
+            for(var j=0; j< allStopwords.length; j++){
+            //   console.log('Stopwords ke '+j+' - '+allStopwords[j]);
+              if(allStopwords[j].words===checkText[i]){
+                checkText[i] = "";
+                console.log('Terdapat stoplist: '+allStopwords[j].words);
               }
             }
+            // console.log('Hasil dari Stoplist');
+          }
+          console.log(checkText);
 
-            // /=========================================ALGORITHM FOR STOPWORDS REMOVAl
+          // /=========================================ALGORITHM FOR STOPWORDS REMOVAl
 
             // ALGORITHM FOR BLOCKWORDS REMOVAl
             // get all the matching blockedwords and save it to b
@@ -913,21 +929,51 @@
               }
               
             }
-            console.log("HASIL AKHIR TEXT PRE-PROCESSING");
-            console.log(checkText);
+            // get all synonym
+          for(var i = 0; i < checkText.length; i++){
+              if(checkText[i]!= ""){
+                $.ajax({
+                  url: 'https://kateglo.com/api.php?format=json&phrase='+checkText[i],
+                  crossDomain: 'true',
+                  async: 'true',
+                  method: 'get'
+                }).done(function(res){
+                  // console.log(res.kateglo.relation.s);
+                  let obj = res.kateglo.relation.s;
+                  Object.keys(obj).forEach(function(key) {
+                    // console.log('Sinonim '+checkText[i]+': '+obj[key].related_phrase);
+                    recommendedAssetText.push(obj[key].related_phrase);
+                  });
+                });
+              }
+            }
 
-            // /=========================================ALGORITHM FOR BLOCKWORDS REMOVAl
 
-
-            // ALGORITHM FOR GIVING ASSET RECOMENDATION
-            // get all the matching token with asset and make the HTML
-            if(checkText.length>0){
-              for(var i = 0; i < checkText.length; i++){
+          // ALGORITHM FOR GIVING ASSET RECOMENDATION
+          // get all the matching token with asset and make the HTML
+          setTimeout(function(){
+            if(recommendedAssetText.length>0){
+              for(var i = 0; i < recommendedAssetText.length; i++){
                 for(var j = 0; j < allAssets.length; j++){
-                  // if(allAssets[j].name.toLowerCase().indexOf(checkText[i]) >= 0 || checkText[i].indexOf(allAssets[j].name.toLowerCase()) >= 0){
-                  if(allAssets[j].name.toLowerCase().indexOf(checkText[i]) >= 0 && checkText[i] != ""){
-                    allRecommendedAssets.push(allAssets[j]);
-                    console.log('Ada: '+checkText[i]+' didalam: '+ allAssets[j].name);
+                  if(allAssets[j].name.toLowerCase().indexOf(recommendedAssetText[i]) >= 0 && recommendedAssetText[i] != "" && recommendedAssetText[i] != undefined){
+                    // console.log(checkText[]);
+                    if(allRecommendedAssets.length > 0){
+                      console.log('allRecommendedAssets: tidak kosong');
+                      // console.log(allRecommendedAssets);
+                      for(k = 0; k < allRecommendedAssets.length; k++){
+                        if(allRecommendedAssets[k].name.toLowerCase() == allAssets[j].name.toLowerCase()){
+                          // ;
+                        }else{
+                          allRecommendedAssets.push(allAssets[j]);
+                          console.log('Ada: '+checkText[i]+' didalam: '+ allAssets[j].name);
+                        }
+                      }
+                    }else{
+                      console.log('allRecommendedAssets: kosong');
+                      console.log(allAssets[j].name.toLowerCase());
+                      allRecommendedAssets.push(allAssets[j]);
+                      console.log('Ada: '+checkText[i]+' didalam: '+ allAssets[j].name);
+                    }
                   }
                 }
               }
@@ -945,13 +991,16 @@
                 }
                 $("#recommendLoader").hide();
                 $('div.recommendedAssets').show();
+                // allRecommendedAssets = null;
               }else{
                 $("#recommendLoader").hide();
                 $("#recommendInfo").show();
               }
             }
               
-            // allRecommendedAssets.length = 0;
+            allRecommendedAssets.length = 0;
+
+          },1500);
 
           }, 3000);
             
@@ -1081,7 +1130,7 @@
             console.log("ID canvas now: "+idCanvas);
             $('.percanvas img').removeClass('my-canvas-active');  
             $(`<div id="percanvas`+newIdCanvas+`" class="percanvas" onclick="switchCanvas(this.id)">
-              <img src="`+currentCanvas.toDataURL()+`" height="100px" width="150px" id="thumbnail`+newIdCanvas+`" class="thumbnail-canvas mr-1">
+              <img src="`+currentCanvas.toDataURL()+`" height="100px" width="150px" id="thumbnail`+newIdCanvas+`" class="thumbnail-canvas mr-1  my-canvas-active">
               <span class="preview-label">`+newIdCanvas+`</span>
             </div>`).insertAfter('#percanvas'+beforeCanvas);
             sumCanvas += 1;

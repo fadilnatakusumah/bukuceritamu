@@ -36,9 +36,7 @@
                         @csrf
                         <div class="form-group">
                             <label for="exampleFormControlInputToAdmin">Isi Masukan berupa saran ataupun kritik</label>
-                            <textarea class="form-control" name="  public function profile(){
-        return $this->hasOne('App\Profile');
-    }" id="exampleFormControlInputToAdmin" rows="3"></textarea>
+                            <textarea class="form-control" name="inputToAdmin" id="exampleFormControlInputToAdmin" rows="3"></textarea>
                         </div>
                         <div class="form-group">
                             <input type="submit" class="btn btn-primary mb-2" value="Kirim">
