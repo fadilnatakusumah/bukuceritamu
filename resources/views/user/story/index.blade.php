@@ -830,31 +830,42 @@
           $("#recommendInfo").hide();
           $("#recommendLoader").show();
           
-          setTimeout(function(){
+          setTimeout(async function(){
             
           // ALGORITHM FOR TOKENIZATION
           // split by space
           var checkText = text.split(/[ -]+/);
             // console.log(checkText);
-          var checkTextForBlockwords = text.split("/[ -]+/");
+          var checkTextForBlockwords = text.split(/[ -]+/);
           var recommendedAssetText = [];
-
           // check for symbol in it and remove it
           for(var i = 0; i < checkText.length; i++){
             // checkText[i].split("-");
-            // checkText[i] =  checkText[i].rep lace(/[\W_\n\r]/g, '').toLowerCase();
+            if(checkText[i]!="" && checkText[i]!= undefined){
+              console.log("checkText[i] :");
+              console.log(checkText[i]);
+              await $.ajax({
+                url: 'https://kateglo.com/api.php?format=json&phrase='+checkText[i],
+                crossDomain: 'true',
+                async: 'true',
+                method: 'get'
+              }).done(function(res){
+                let obj = res.kateglo.relation.s;
+                Object.keys(obj).forEach(function(key) {
+                  recommendedAssetText.push(obj[key].related_phrase);
+                });
+                console.log("recommendedAssetText:");
+                console.log(recommendedAssetText);
+              });
+            }
+            checkText[i] =  checkText[i].replace(/[\W_\n\r]/g, '').toLowerCase();
             console.log(checkText[i]);
           }
-          // checkTextForBlockwords.push(checkText[i]);
-          // checkTextForBlockwords = checkText;
-          // console.log("checkTextForBlockwords: ");
-          // console.log(checkTextForBlockwords);
           // /=========================================ALGORITHM FOR TOKENIZATION
 
 
           // ALGORITHM FOR STOPWORDS REMOVAl
           // remove all the matching stopwords and switch to empty string
-          // console.log(allStopwords);
           for(var i = 0; i < checkText.length; i++){
             console.log('Token ke '+i+' - '+checkText[i]);
             for(var j=0; j< allStopwords.length; j++){
@@ -895,8 +906,9 @@
               //loop every collocation words
               for(var j = 0; j < collocationWords.length; j++){
                   if(checkText[i].endsWith(collocationWords[j])){
-                  checkText[i] = checkText[i].slice(0, checkText[i].length-collocationWords[j].length);
-                  console.log("COLLOCATION WORD REMOVED");
+                  // checkText[i] = checkText[i].slice(0, checkText[i].length-collocationWords[j].length);
+                    checkText.push(checkText[i].slice(0, checkText[i].length-collocationWords[j].length));
+                    console.log("COLLOCATION WORD REMOVED");
                   break;
                 }else{
                   // looping data prefix  (CLUSTER 2) 
@@ -904,6 +916,7 @@
                   // check and remove prefix cluster 2 and swith to  " " (empty string)
                     if(checkText[i].startsWith(prefixWordsForNothing[k])){
                       checkText[i] = checkText[i].slice(prefixWordsForNothing[k].length);
+                      // checkText.push(checkText[i].slice(prefixWordsForNothing[k].length));
                       console.log("PREFIX WORD FROM CLUSTER 2 REMOVED");
                       break;
                     }else{
@@ -912,6 +925,7 @@
                         // check and remove prefix cluster 3 and swith to  "S"
                         if(checkText[i].startsWith(prefixWordsForS[l])){
                           checkText[i] = checkText[i].replace(prefixWordsForS[l], 's');
+                          // checkText.push(checkText[i].replace(prefixWordsForS[l], 's'));
                           console.log("PREFIX WORD FROM CLUSTER 3 REPLACED WITH 'S'");
                           break;
                         }else{
@@ -920,6 +934,7 @@
                           // check and remove prefix cluster 4 and swith to  "P"
                             if(checkText[i].startsWith(prefixWordsForP[m])){
                               checkText[i] = checkText[i].replace(prefixWordsForP[m], 'p');
+                              // checkText.push(checkText[i].replace(prefixWordsForP[m], 'p'));
                               console.log("PREFIX WORD FROM CLUSTER 3 REPLACED WITH 'S'");
                               break;
                             }
@@ -931,138 +946,118 @@
                 }
               }
             }
-            
           }
           console.log("HASIL AKHIR TEXT PRE-PROCESSING");
           console.log(checkText);
           // recommendedAssetText = checkText;
-          // console.log(recommendedAssetText);
+          console.log("recommendedAssetText");
+          console.log(recommendedAssetText);
+
 
 
           // /=========================================ALGORITHM FOR BLOCKWORDS STEMMING
-
-          // get all synonym
-          for(var i = 0; i < checkText.length; i++){
-              if(checkText[i]!= ""){
-                $.ajax({
-                  url: 'https://kateglo.com/api.php?format=json&phrase='+checkText[i],
-                  crossDomain: 'true',
-                  async: 'true',
-                  method: 'get'
-                }).done(function(res){
-                  console.log(res.kateglo.relation.s);
-                  let obj = res.kateglo.relation.s;
-                  Object.keys(obj).forEach(function(key) {
-                    console.log('Sinonim '+checkText[i]+': '+obj[key].related_phrase);
-                    recommendedAssetText.push(obj[key].related_phrase);
-                  });
-
-
-
-                  if(recommendedAssetText.length>0){
-                    for(var i = 0; i < recommendedAssetText.length; i++){
-                      for(var j = 0; j < allAssets.length; j++){
-                        if(allAssets[j].name.toLowerCase().indexOf(recommendedAssetText[i]) >= 0 && recommendedAssetText[i] != "" && recommendedAssetText[i] != undefined){
-                          // console.log(checkText[]);
-                          if(allRecommendedAssets.length > 0){
-                            console.log('allRecommendedAssets: tidak kosong');
-                            // console.log(allRecommendedAssets);
-                            for(k = 0; k < allRecommendedAssets.length; k++){
-                              if(allRecommendedAssets[k].name.toLowerCase() == allAssets[j].name.toLowerCase()){
-                                // ;
-                              }else{
-                                allRecommendedAssets.push(allAssets[j]);
-                                console.log('Ada: '+checkText[i]+' didalam: '+ allAssets[j].name);
-                              }
-                            }
-                          }else{
-                            console.log('allRecommendedAssets: kosong');
-                            console.log(allAssets[j].name.toLowerCase());
-                            allRecommendedAssets.push(allAssets[j]);
-                            console.log('Ada: '+checkText[i]+' didalam: '+ allAssets[j].name);
-                          }
-                        }
-                      }
-                    }
-                    console.log(allRecommendedAssets);
-                    // $('#recommendInfo').hide();
-                    $('#recommendLoader').hide();
-                    if(allRecommendedAssets.length>0){
-                    // make the html  
-                      for(var i = 0; i < allRecommendedAssets.length; i++){
-                        $('.recommendedAssets').append(`
-                        <div class="my-div-thumbnail" onclick="getRecommendAsset(this)">
-                            <img style="width:150px; height:150px;"  class="my-thumbnail-asset float-left m-1" data-asset-location="`+ window.location.origin+"/"+allRecommendedAssets[i].location +`" data-asset-name="`+ allRecommendedAssets[i].name +`" src="`+ window.location.origin+"/"+allRecommendedAssets[i].location +`" alt="">
-                            <span class="my-thumbnail-label">`+ allRecommendedAssets[i].name +`</span>
-                        </div>`);
-                      }
-                      $("#recommendLoader").hide();
-                      $('div.recommendedAssets').show();
-                      // allRecommendedAssets = null;
-                    }else{
-                      $("#recommendLoader").hide();
-                      $("#recommendInfo").show();
-                    }
+      
+            // ALGORITHM FOR GIVING ASSET RECOMENDATION
+            if(checkText.length>0){
+              for(var i = 0; i < checkText.length; i++){
+                for(var j = 0; j < allAssets.length; j++){
+                  if(allAssets[j].name.toLowerCase().indexOf(checkText[i]) >= 0 && checkText[i] != "" && checkText[i] != undefined){
+                    // console.log(checkText[]);
+                      console.log('allRecommendedAssets: kosong');
+                      console.log(allAssets[j].name.toLowerCase());
+                      allRecommendedAssets.push(allAssets[j]);
+                      console.log('Ada: '+checkText[i]+' didalam: '+ allAssets[j].name);
                   }
-                    
-                  allRecommendedAssets.length = 0;
-                });
+                }
+              }
+              console.log(allRecommendedAssets);
+              // $('#recommendInfo').hide();
+              $('#recommendLoader').hide();
+              if(allRecommendedAssets.length>0){
+                console.log(allRecommendedAssets);
+                
+              // make the html   
+                for(var i = 0; i < allRecommendedAssets.length; i++){
+                  // console.log(i);
+                  $('.recommendedAssets').append(`
+                  <div class="my-div-thumbnail" onclick="getRecommendAsset(this)">
+                      <img style="width:150px; height:150px;"  class="my-thumbnail-asset float-left m-1" data-asset-location="`+ window.location.origin+"/"+allRecommendedAssets[i].location +`" data-asset-name="`+ allRecommendedAssets[i].name +`" src="`+ window.location.origin+"/"+allRecommendedAssets[i].location +`" alt="">
+                      <span class="my-thumbnail-label">`+ allRecommendedAssets[i].name +`</span>
+                  </div>`);
+                }
+                // allRecommendedAssets.length = 0;
+
+
+                $("#recommendLoader").hide();
+                $('div.recommendedAssets').show();
+                
+
+              }else{
+                $("#recommendLoader").hide();
+                $("#recommendInfo").show();
               }
             }
-
-
-          // ALGORITHM FOR GIVING ASSET RECOMENDATION
-          // get all the matching token with asset and make the HTML
-          // setTimeout(function(){
-            // if(recommendedAssetText.length>0){
-            //   for(var i = 0; i < recommendedAssetText.length; i++){
-            //     for(var j = 0; j < allAssets.length; j++){
-            //       if(allAssets[j].name.toLowerCase().indexOf(recommendedAssetText[i]) >= 0 && recommendedAssetText[i] != "" && recommendedAssetText[i] != undefined){
-            //         // console.log(checkText[]);
-            //         if(allRecommendedAssets.length > 0){
-            //           console.log('allRecommendedAssets: tidak kosong');
-            //           // console.log(allRecommendedAssets);
-            //           for(k = 0; k < allRecommendedAssets.length; k++){
-            //             if(allRecommendedAssets[k].name.toLowerCase() == allAssets[j].name.toLowerCase()){
-            //               // ;
-            //             }else{
-            //               allRecommendedAssets.push(allAssets[j]);
-            //               console.log('Ada: '+checkText[i]+' didalam: '+ allAssets[j].name);
-            //             }
-            //           }
-            //         }else{
-            //           console.log('allRecommendedAssets: kosong');
-            //           console.log(allAssets[j].name.toLowerCase());
-            //           allRecommendedAssets.push(allAssets[j]);
-            //           console.log('Ada: '+checkText[i]+' didalam: '+ allAssets[j].name);
-            //         }
-            //       }
-            //     }
-            //   }
-            //   console.log(allRecommendedAssets);
-            //   // $('#recommendInfo').hide();
-            //   $('#recommendLoader').hide();
-            //   if(allRecommendedAssets.length>0){
-            //   // make the html  
-            //     for(var i = 0; i < allRecommendedAssets.length; i++){
-            //       $('.recommendedAssets').append(`
-            //       <div class="my-div-thumbnail" onclick="getRecommendAsset(this)">
-            //           <img style="width:70px; height:70px;"  class="my-thumbnail-asset float-left m-1" data-asset-location="`+ window.location.origin+"/"+allRecommendedAssets[i].location +`" data-asset-name="`+ allRecommendedAssets[i].name +`" src="`+ window.location.origin+"/"+allRecommendedAssets[i].location +`" alt="">
-            //           <span class="my-thumbnail-label">`+ allRecommendedAssets[i].name +`</span>
-            //       </div>`);
-            //     }
-            //     $("#recommendLoader").hide();
-            //     $('div.recommendedAssets').show();
-            //     // allRecommendedAssets = null;
-            //   }else{
-            //     $("#recommendLoader").hide();
-            //     $("#recommendInfo").show();
-            //   }
-            // }
               
-            // allRecommendedAssets.length = 0;
+            allRecommendedAssets.length = 0;
+            
+            if(recommendedAssetText.length>0){
+              // 
 
-          // },1500);
+              for(var i = 0; i < recommendedAssetText.length; i++){
+                for(var j = 0; j < allAssets.length; j++){
+                  if(allAssets[j].name.toLowerCase().indexOf(recommendedAssetText[i]) >= 0 && recommendedAssetText[i] != "" && recommendedAssetText[i] != undefined){
+                    // console.log(checkText[]);
+                      console.log('allRecommendedAssets: kosong');
+                      console.log(allAssets[j].name.toLowerCase());
+                      allRecommendedAssets.push(allAssets[j]);
+                      console.log('Ada: '+recommendedAssetText[i]+' didalam: '+ allAssets[j].name);
+                  }
+                }
+              }
+              console.log(allRecommendedAssets);
+              // $('#recommendInfo').hide();
+              $('#recommendLoader').hide();
+              if(allRecommendedAssets.length>0){
+                // allRecommendedAssets.length === new Set(allRecommendedAssets).size;
+                // allRecommendedAssets = deleteDuplicate(allRecommendedAssets);
+                
+                
+                
+                  // var newarray = allRecommendedAssets,
+                  // filtered = newarray.filter(function (a) {
+                  //     if (!this[a.name]) {
+                  //         this[a.name] = true;
+                  //         return true;
+                  //     }
+                  // }, Object.create(null));
+                
+
+                // console.log("Duplicate deleted");
+                console.log(allRecommendedAssets);
+                
+              // make the html   
+                for(var i = 0; i < allRecommendedAssets.length; i++){
+                  // console.log(i);
+                  $('.recommendedAssets').append(`
+                  <div class="my-div-thumbnail" onclick="getRecommendAsset(this)">
+                      <img style="width:150px; height:150px;"  class="my-thumbnail-asset float-left m-1" data-asset-location="`+ window.location.origin+"/"+allRecommendedAssets[i].location +`" data-asset-name="`+ allRecommendedAssets[i].name +`" src="`+ window.location.origin+"/"+allRecommendedAssets[i].location +`" alt="">
+                      <span class="my-thumbnail-label">`+ allRecommendedAssets[i].name +`</span>
+                  </div>`);
+                }
+                // allRecommendedAssets.length = 0;
+
+
+                $("#recommendLoader").hide();
+                $('div.recommendedAssets').show();
+                
+
+              }else{
+                $("#recommendLoader").hide();
+                $("#recommendInfo").show();
+              }
+
+              // 
+            }
 
         }, 3000);
 
@@ -1240,6 +1235,25 @@
             }
           };
         }
+
+        // function for deleting duplicate array 
+        // var deleteDuplicate = function(arr){
+        //   // var uniqueArray = [];
+        //   // var myArray = arr.filter(function(el){
+        //   //   if(uniqueArray.indexOf(el.name) == -1){
+        //   //     uniqueArray.push(el);
+        //   //     return true;
+        //   //   }
+
+        //   //   return false;
+        //   // });
+
+        //   // return myArray;
+
+        //   // second way
+          
+        // }
+
         // Function for deleting canvas
         function deleteCanvas(){
           if(idCanvas==0){
