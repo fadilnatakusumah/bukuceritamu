@@ -1,10 +1,10 @@
 <?php
 
-$urlHeroku = parse_url(getenv('DATABASE_URL'));
-$host = $urlHeroku['host']??null;
-$username = $urlHeroku['user']??null;
-$password = $urlHeroku['pass']??null;
-$database = substr($url["path"], 1)??null;
+// $urlHeroku = parse_url(getenv('DATABASE_URL'));
+// $host = $urlHeroku['host']??null;
+// $username = $urlHeroku['user']??null;
+// $password = $urlHeroku['pass']??null;
+// $database = substr($url["path"], 1)??null;
 
 
 return [
@@ -20,7 +20,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'pgsql_heroku'),
+    'default' => env('DB_CONNECTION', 'mysql'),
 
     /*
     |--------------------------------------------------------------------------
@@ -80,16 +80,16 @@ return [
             'sslmode' => 'prefer',
         ],
         
-        'pgsql_heroku' => [
-            'driver' => 'pgsql',
-            'host' => $host,
-            'database' => $database,
-            'username' => $username,
-            'password' => $password,
-            'charset' => 'utf8',
-            'prefix' => '',
-            'schema' => 'public'
-        ],
+        // 'pgsql_heroku' => [
+        //     'driver' => 'pgsql',
+        //     'host' => $host,
+        //     'database' => $database,
+        //     'username' => $username,
+        //     'password' => $password,
+        //     'charset' => 'utf8',
+        //     'prefix' => '',
+        //     'schema' => 'public'
+        // ],
         
 
         'sqlsrv' => [
