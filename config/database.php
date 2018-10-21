@@ -20,7 +20,7 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'mysql'),
+    'default' => env('DB_CONNECTION', 'mysqld4free.net'),
 
     /*
     |--------------------------------------------------------------------------
@@ -65,6 +65,21 @@ return [
             'strict' => true,
             'engine' => null,
             // 'options' => [PDO::ATTR_EMULATE_PREPARES => true,]
+        ],
+        
+        'mysqld4free.net' => [
+            'driver' => 'mysql',
+            'host' => env('DB_HOST', 'db4free.net'),
+            'port' => env('DB_PORT', '3306'),
+            'database' => env('DB_DATABASE', 'bukuceritamu'),
+            'username' => env('DB_USERNAME', 'fadilnatakusumah'),
+            'password' => env('DB_PASSWORD', 'bismillah'),
+            'unix_socket' => env('DB_SOCKET', ''),
+            'charset' => 'utf8mb4',
+            'collation' => 'utf8mb4_unicode_ci',
+            'prefix' => '',
+            'strict' => true,
+            'engine' => null,
         ],
 
         'pgsql' => [
