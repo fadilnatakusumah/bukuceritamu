@@ -309,7 +309,7 @@
             <div class="card-body" align="center" style="background-color:#8dbadf;">
               <div class="my-canvas">
                 {{-- <canvas id="canvas0" width="711" height="400"></canvas> --}}
-                <canvas id="canvas0" ></canvas>
+                <canvas id="canvas0" style="min-height: 390px; min-width:651px"></canvas>
               </div>
             </div>
           </div>
