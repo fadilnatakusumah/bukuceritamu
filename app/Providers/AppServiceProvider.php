@@ -15,9 +15,9 @@ class AppServiceProvider extends ServiceProvider
     public function boot(UrlGenerator $url)
     {
         // FOR HEROKU TO REDIRECT
-        if(env('REDIRECT_HTTPS')) {
-            $url->formatScheme('https');
-        }
+        // if(env('REDIRECT_HTTPS')) {
+        //     $url->formatScheme('https');
+        // }
     }
 
     /**
@@ -28,13 +28,13 @@ class AppServiceProvider extends ServiceProvider
     public function register()
     {
         // For redirecting to public folder in WEBHOSTING
-        // $this->app->bind('path.public', function(){
-        //     return base_path('public_html');
-        // });    
+        $this->app->bind('path.public', function(){
+            return base_path('public_html');
+        });    
 
         // FOR HEROKU TO REDIRECT
-        if(env('REDIRECT_HTTPS')) {
-            $this->app['request']->server->set('HTTPS', true);
-        }
+        // if(env('REDIRECT_HTTPS')) {
+        //     $this->app['request']->server->set('HTTPS', true);
+        // }
     }
 }
